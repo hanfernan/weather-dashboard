@@ -16,7 +16,21 @@
     <header>
       <h1 class="">Weather Dashboard</h1>
     </header>
-    <main></main>
+    <main>
+      <div class="row">
+        <aside class="col-sm-3">
+          <form id="search-form">
+            <div class="form-group">
+              <input type="text" class="form-control" id="search-term" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+          <div>search results go here</div>
+        </aside>
+        <section class="col-sm-9">Local weather data will go here</section>
+        <section class="col-sm-9">5-Day Forecast will go here</section>
+      </div>
+    </main>
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
