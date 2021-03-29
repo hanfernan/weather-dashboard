@@ -9,10 +9,10 @@ searchForm.on("submit", function (event) {
     console.log(searchTerm);
     //store the API key in a variable
     var apiKey = "32529dfed4bea5888fb05111a3006541";
-    //build the API URL with search term and API key
-    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=" + apiKey;
+    //build the API URL with search term and API key for local weather
+    var localURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=" + apiKey;
     //Make an API call using fetch
-    fetch(queryURL)
+    fetch(localURL)
         .then(function (response) {
             return response.json();
         })
