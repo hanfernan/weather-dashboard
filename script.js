@@ -3,6 +3,8 @@ var searchTermEl = $("#search-term");
 var weatherContainerEl = $("#weather-container");
 var localWeatherEl = $("#local-weather");
 var fiveDayEl = $("#five-day-forecast");
+var fiveDayContainer = $("#five-day-container");
+var today = moment().format("M/DD/YYYY");
 var cities = [];
 
 searchForm.on("submit", function (event) {
@@ -24,16 +26,14 @@ function getWeather(city) {
     //build the API URL with search term and API key for local weather
     var localURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + apiKey;
     var fiveDayURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + apiKey;
-
-    //Make an API call using fetch
+    //Make an API call for local weather using fetch
     fetch(localURL)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
             //create today's weather elements and assign content
-            var displayCityName = $('<h2>').addClass('col-sm-12').text(city);
-            //TODO: add today's date with moment to .text(data) above
+            var displayCityName = $('<h2>').addClass('col-sm-12').text(city + " " + today);
             var tempEl = $('<li>').text("Temperature: " + data.main.temp + " °F");
             var humidEl = $('<li>').text("Humidity: " + data.main.humidity + " %");
             var windSpeedEl = $('<li>').text("Wind Speed: " + data.wind.speed + " MPH");
@@ -43,42 +43,32 @@ function getWeather(city) {
             localWeatherEl.append(humidEl);
             localWeatherEl.append(windSpeedEl);
             //TODO: find uv index console.log(data.);
+
+            //make an API call for 5 Day forecast using fetch
             fetch(fiveDayURL)
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (data) {
-                    console.log(data.list);
+                    var fiveDayHeading = $('<h2>').text("5-Day Forecast:")
+                    fiveDayContainer.append(fiveDayHeading);
+                    fiveDayEl.removeClass("d-none")
                     for (i = 0; i < data.list.length; i++) {
 
                         if (data.list[i].dt_txt.includes("12:00:00")) {
-                            console.log(data.list[i])
+                            var fiveDayDateEl = $('<h4>').text((moment.unix(data.list[i].dt).format("M/DD/YYYY")));
+                            fiveDayEl.append(fiveDayDateEl);
                             var fiveDayTempEl = $('<div>').addClass('card-body bg-primary text-white').text("Temp: " + data.list[i].main.temp);
                             fiveDayEl.append(fiveDayTempEl);
-                            //if the date time includes 1200
-                            //then we will assume that object has the weather we want
-                            //use dom manipulation to append to page
+                            //TODO: add if else statement for icons
+                            var fiveDayHumidEl = $('<div>').addClass('card-body bg-primary text-white').text("Humidity: " + data.list[i].main.humidity + "%");
+                            fiveDayEl.append(fiveDayHumidEl);
                         }
                     }
-
-                    // for (i = 0; i < 37; i + 4) {
-                    // console.log[data.list[i]]
-                    // }
-                    // var dayOne = data.list[4];
-                    // var dayTwo = data.list[12];
-                    // var dayThree = data.list[20];
-                    // var dayFour = data.list[28];
-                    // var dayFive = data.list[36];
-                    // console.log(dayOne.dt_txt);
-                    // console.log(dayOne.clouds);
-                    // console.log(dayOne.main.temp);
-                    // console.log(dayOne.main.humidity);
-                    // console.log(dayTwo);
 
                 })
 
         });
-    // 
 
 }
 
@@ -95,13 +85,11 @@ getStorage();
 
 
 //TODO: Remaining:
-//NEED DIFF ENDPOINT: find UV index
-//EASY: add today's date with moment.JS
-//MEDIUM: fix formatting 
-//MEDIUM: append search results to buttons that will run getWeather when clicked
-//HARD: append 5 day forecast info to cards and format appropriately with icons for temp
-//ANNOYING: color code UV index
+//add search buttons
+//fix formatting
+//add weather symbols with if statement
 
-//QUESTIONS:
-//How do you get those icons on the five day forecast?
-//need a second look: Why is atlanta below?
+//If time:
+//find UV index and color code
+//color code UV index
+
