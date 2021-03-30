@@ -43,28 +43,42 @@ function getWeather(city) {
             localWeatherEl.append(humidEl);
             localWeatherEl.append(windSpeedEl);
             //TODO: find uv index console.log(data.);
+            fetch(fiveDayURL)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data.list);
+                    for (i = 0; i < data.list.length; i++) {
+
+                        if (data.list[i].dt_txt.includes("12:00:00")) {
+                            console.log(data.list[i])
+                            var fiveDayTempEl = $('<div>').addClass('card-body bg-primary text-white').text("Temp: " + data.list[i].main.temp);
+                            fiveDayEl.append(fiveDayTempEl);
+                            //if the date time includes 1200
+                            //then we will assume that object has the weather we want
+                            //use dom manipulation to append to page
+                        }
+                    }
+
+                    // for (i = 0; i < 37; i + 4) {
+                    // console.log[data.list[i]]
+                    // }
+                    // var dayOne = data.list[4];
+                    // var dayTwo = data.list[12];
+                    // var dayThree = data.list[20];
+                    // var dayFour = data.list[28];
+                    // var dayFive = data.list[36];
+                    // console.log(dayOne.dt_txt);
+                    // console.log(dayOne.clouds);
+                    // console.log(dayOne.main.temp);
+                    // console.log(dayOne.main.humidity);
+                    // console.log(dayTwo);
+
+                })
+
         });
-    fetch(fiveDayURL)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            for (i = 0; i < 37; i + 4) {
-                console.log[data.list[i]]
-            }
-            // var dayOne = data.list[4];
-            // var dayTwo = data.list[12];
-            // var dayThree = data.list[20];
-            // var dayFour = data.list[28];
-            // var dayFive = data.list[36];
-            // console.log(dayOne.dt_txt);
-            // console.log(dayOne.clouds);
-            // console.log(dayOne.main.temp);
-            // console.log(dayOne.main.humidity);
-            // console.log(dayTwo);
-
-        })
-
+    // 
 
 }
 
@@ -81,14 +95,13 @@ getStorage();
 
 
 //TODO: Remaining:
-//EASY: find UV index
+//NEED DIFF ENDPOINT: find UV index
 //EASY: add today's date with moment.JS
 //MEDIUM: fix formatting 
 //MEDIUM: append search results to buttons that will run getWeather when clicked
-//HARD: append 5 day forecast info to cards and format appropriately 
+//HARD: append 5 day forecast info to cards and format appropriately with icons for temp
 //ANNOYING: color code UV index
 
 //QUESTIONS:
 //How do you get those icons on the five day forecast?
 //need a second look: Why is atlanta below?
-//where is UV index??????????
