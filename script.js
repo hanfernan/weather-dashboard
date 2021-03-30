@@ -1,6 +1,9 @@
 var searchForm = $("#search-form");
 var searchTermEl = $("#search-term");
+var localWeatherEl = $("#local-weather");
+var fiveDayEl = $("#five-day-forecast");
 var cities = [];
+var today = moment();
 
 searchForm.on("submit", function (event) {
     event.preventDefault();
@@ -16,8 +19,10 @@ searchForm.on("submit", function (event) {
     //     }
     // }
     cities.push(searchTerm);
+    //convert the response from JSON
     localStorage.setItem("citiesArray", JSON.stringify(cities));
     //.val allows you to pull info from form input
+    //start by console logging the data
     console.log(searchTerm);
     getWeather(searchTerm);
 })
@@ -33,17 +38,26 @@ function getWeather(city) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
+            var tempEl = $('<li>').text("Temperature: " + data.main.temp + "F");
+            localWeatherEl.append(tempEl);
+            console.log(data.main.temp);
+            var humidEl = $('<li>').text("Humidity: " + data.main.humidity + " %");
+            localWeatherEl.append(humidEl);
+            console.log(data.main.humidity);
+            var windSpeedEl = $('<li>').text("Wind Speed: " + data.wind.speed + " MPH");
+            localWeatherEl.append(windSpeedEl);
+            console.log(data.wind.speed);
+            // find uv index console.log(data.);
         });
-    //convert the response from JSON
-    //start by console logging the data
+
+
 }
 
 
 function getStorage() {
     if (localStorage.getItem("citiesArray")) {
         cities = JSON.parse(localStorage.getItem("citiesArray"))
-        //loop through and append to a button for each city
+        //loop through and append to a button for each city that will run getWeather when clicked
         console.log(cities);
     }
 }
