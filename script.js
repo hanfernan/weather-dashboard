@@ -1,3 +1,4 @@
+//variables
 var searchForm = $("#search-form");
 var searchTermEl = $("#search-term");
 var weatherContainerEl = $("#weather-container");
@@ -9,25 +10,16 @@ var buttonContainer = $('#button-container');
 var today = moment().format("M/DD/YYYY");
 var cities = [];
 
-searchForm.on("submit", function (event) {
-    event.preventDefault();
-    //Grab the search term out of the input.
-    var searchTerm = searchTermEl.val();
-    cities.push(searchTerm);
-    //convert the response from JSON
-    localStorage.setItem("citiesArray", JSON.stringify(cities));
-    //.val allows you to pull info from form input
-    //start by console logging the data
-    console.log(searchTerm);
-    getWeather(searchTerm);
-})
+//functions
 
+//this function pulls info from the API and displays the weather data on the page
 function getWeather(city) {
     //store the API key in a variable
     var apiKey = "32529dfed4bea5888fb05111a3006541";
     //build the API URL with search term and API key for local weather
     var localURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + apiKey;
     var fiveDayURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + apiKey;
+
 
     //Make an API call for local weather using fetch
     fetch(localURL)
@@ -41,17 +33,30 @@ function getWeather(city) {
             var iconURL = "http://openweathermap.org/img/w/" + localIcon + ".png"
             var displayCityName = $('<h2>').addClass('col-12').text(city + " " + today);
             var localIconEl = $('<img>').attr("src", iconURL);
-            localIconContainer.append(localIconEl);
-            weatherContainerEl.append(displayCityName);
             var tempEl = $('<li>').addClass("m-2").text("Temperature: " + data.main.temp + " °F");
             var humidEl = $('<li>').addClass("m-2").text("Humidity: " + data.main.humidity + " %");
             var windSpeedEl = $('<li>').addClass("m-2").text("Wind Speed: " + data.wind.speed + " MPH");
-
             //append today's weather elements to the page
+            weatherContainerEl.append(displayCityName);
+            localIconContainer.append(localIconEl);
             localWeatherEl.append(tempEl);
             localWeatherEl.append(humidEl);
             localWeatherEl.append(windSpeedEl);
-            //TODO: find uv index console.log(data.);
+
+            //define information for UV Index
+            var lat = data.coord.lat;
+            var lon = data.coord.lon;
+            var uvIndexURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=imperial&appid=" + apiKey;
+            fetch(uvIndexURL)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data);
+                    var uvIndexEl = $('<li>').addClass("m-2").text("UV Index: " + data.current.uvi);
+                    localWeatherEl.append(uvIndexEl);
+                })
+
 
             //make an API call for 5 Day forecast using fetch
             fetch(fiveDayURL)
@@ -68,7 +73,7 @@ function getWeather(city) {
                             var fiveDayIconURL = "http://openweathermap.org/img/w/" + fiveDayIcon + ".png"
                             var fiveDayIconEl = $('<img>').attr("src", fiveDayIconURL);
                             var card = $("<div>").addClass("card col-md-2 ml-4 bg-primary text-white");
-                            var cardBody = $("<div>").addClass("card-body p-3 forecastBody");
+                            var cardBody = $("<div>").addClass("card-body p-2");
                             var fiveDayDateEl = $('<h4>').addClass('card-title').text((moment.unix(data.list[i].dt).format("M/DD/YYYY")));
                             var fiveDayTempEl = $('<div>').addClass('card-text').text("Temp: " + data.list[i].main.temp + " °F");
                             var fiveDayHumidEl = $('<div>').addClass('card-text').text("Humidity: " + data.list[i].main.humidity + "%");
@@ -96,15 +101,19 @@ function getStorage() {
     }
 }
 
+//call functions
 getStorage();
 
-
-
-//TODO: Remaining:
-//link function to button
-//add weather symbols with if statement
-
-//If time:
-//find UV index and color code
-//color code UV index
-
+//event listeners
+searchForm.on("submit", function (event) {
+    event.preventDefault();
+    //Grab the search term out of the input.
+    var searchTerm = searchTermEl.val();
+    cities.push(searchTerm);
+    //convert the response from JSON
+    localStorage.setItem("citiesArray", JSON.stringify(cities));
+    //.val allows you to pull info from form input
+    //start by console logging the data
+    console.log(searchTerm);
+    getWeather(searchTerm);
+})
