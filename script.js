@@ -2,6 +2,7 @@ var searchForm = $("#search-form");
 var searchTermEl = $("#search-term");
 var weatherContainerEl = $("#weather-container");
 var localWeatherEl = $("#local-weather");
+var localIconContainer = $('#local-icon');
 var fiveDayContainer = $("#five-day-container");
 var fiveDayHeadingContainer = $("#five-day-heading");
 var buttonContainer = $('#button-container');
@@ -27,18 +28,25 @@ function getWeather(city) {
     //build the API URL with search term and API key for local weather
     var localURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + apiKey;
     var fiveDayURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + apiKey;
+
     //Make an API call for local weather using fetch
     fetch(localURL)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
+            console.log(data);
             //create today's weather elements and assign content
+            var localIcon = data.weather[0].icon;
+            var iconURL = "http://openweathermap.org/img/w/" + localIcon + ".png"
             var displayCityName = $('<h2>').addClass('col-12').text(city + " " + today);
+            var localIconEl = $('<img>').attr("src", iconURL);
+            localIconContainer.append(localIconEl);
             weatherContainerEl.append(displayCityName);
             var tempEl = $('<li>').addClass("m-2").text("Temperature: " + data.main.temp + " °F");
             var humidEl = $('<li>').addClass("m-2").text("Humidity: " + data.main.humidity + " %");
             var windSpeedEl = $('<li>').addClass("m-2").text("Wind Speed: " + data.wind.speed + " MPH");
+
             //append today's weather elements to the page
             localWeatherEl.append(tempEl);
             localWeatherEl.append(humidEl);
@@ -56,12 +64,15 @@ function getWeather(city) {
                     for (i = 0; i < data.list.length; i++) {
 
                         if (data.list[i].dt_txt.includes("12:00:00")) {
+                            var fiveDayIcon = (data.list[0].weather[0].icon);
+                            var fiveDayIconURL = "http://openweathermap.org/img/w/" + fiveDayIcon + ".png"
+                            var fiveDayIconEl = $('<img>').attr("src", fiveDayIconURL);
                             var card = $("<div>").addClass("card col-md-2 ml-4 bg-primary text-white");
                             var cardBody = $("<div>").addClass("card-body p-3 forecastBody");
                             var fiveDayDateEl = $('<h4>').addClass('card-title').text((moment.unix(data.list[i].dt).format("M/DD/YYYY")));
                             var fiveDayTempEl = $('<div>').addClass('card-text').text("Temp: " + data.list[i].main.temp + " °F");
                             var fiveDayHumidEl = $('<div>').addClass('card-text').text("Humidity: " + data.list[i].main.humidity + "%");
-                            cardBody.append(fiveDayDateEl, fiveDayTempEl, fiveDayHumidEl);
+                            cardBody.append(fiveDayDateEl, fiveDayTempEl, fiveDayIconEl, fiveDayHumidEl);
                             card.append(cardBody);
                             fiveDayContainer.append(card);
                         }
@@ -78,11 +89,9 @@ function getStorage() {
     if (localStorage.getItem("citiesArray")) {
         cities = JSON.parse(localStorage.getItem("citiesArray"));
         for (i = 0; i < cities.length; i++) {
-            var button = $('<button>').addClass("btn btn-outline-secondary text-left p-2 m-1").text(cities[i]);
+            var button = $('<button>').addClass("btn btn-outline-secondary text-left p-2").text(cities[i]);
             buttonContainer.append(button);
         };
-
-        //TODO: loop through and append to a button for each city that will run getWeather when clicked
         console.log(cities);
     }
 }
@@ -90,9 +99,9 @@ function getStorage() {
 getStorage();
 
 
+
 //TODO: Remaining:
-//add search buttons
-//fix function so it clears out display with each refresh
+//link function to button
 //add weather symbols with if statement
 
 //If time:
