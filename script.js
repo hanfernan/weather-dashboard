@@ -27,7 +27,6 @@ function getWeather(city) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
             //create today's weather elements and assign content
             var localIcon = data.weather[0].icon;
             var iconURL = "http://openweathermap.org/img/w/" + localIcon + ".png"
@@ -52,7 +51,6 @@ function getWeather(city) {
                     return response.json();
                 })
                 .then(function (data) {
-                    console.log(data);
                     var uvIndexEl = $('<li>').addClass("m-2").text("UV Index: " + data.current.uvi);
                     localWeatherEl.append(uvIndexEl);
                 })
@@ -89,7 +87,7 @@ function getWeather(city) {
 
 }
 
-
+//get items from local storage
 function getStorage() {
     if (localStorage.getItem("citiesArray")) {
         cities = JSON.parse(localStorage.getItem("citiesArray"));
@@ -97,7 +95,6 @@ function getStorage() {
             var button = $('<button>').addClass("btn btn-outline-secondary text-left p-2").text(cities[i]);
             buttonContainer.append(button);
         };
-        console.log(cities);
     }
 }
 
@@ -112,8 +109,5 @@ searchForm.on("submit", function (event) {
     cities.push(searchTerm);
     //convert the response from JSON
     localStorage.setItem("citiesArray", JSON.stringify(cities));
-    //.val allows you to pull info from form input
-    //start by console logging the data
-    console.log(searchTerm);
     getWeather(searchTerm);
 })
