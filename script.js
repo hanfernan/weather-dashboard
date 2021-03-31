@@ -4,7 +4,7 @@ var weatherContainerEl = $("#weather-container");
 var localWeatherEl = $("#local-weather");
 var fiveDayContainer = $("#five-day-container");
 var fiveDayHeadingContainer = $("#five-day-heading");
-var buttonContainer = $('button-container');
+var buttonContainer = $('#button-container');
 var today = moment().format("M/DD/YYYY");
 var cities = [];
 
@@ -59,7 +59,7 @@ function getWeather(city) {
                             var card = $("<div>").addClass("card col-md-2 ml-4 bg-primary text-white");
                             var cardBody = $("<div>").addClass("card-body p-3 forecastBody");
                             var fiveDayDateEl = $('<h4>').addClass('card-title').text((moment.unix(data.list[i].dt).format("M/DD/YYYY")));
-                            var fiveDayTempEl = $('<div>').addClass('card-text').text("Temp: " + data.list[i].main.temp);
+                            var fiveDayTempEl = $('<div>').addClass('card-text').text("Temp: " + data.list[i].main.temp + " °F");
                             var fiveDayHumidEl = $('<div>').addClass('card-text').text("Humidity: " + data.list[i].main.humidity + "%");
                             cardBody.append(fiveDayDateEl, fiveDayTempEl, fiveDayHumidEl);
                             card.append(cardBody);
@@ -77,8 +77,11 @@ function getWeather(city) {
 function getStorage() {
     if (localStorage.getItem("citiesArray")) {
         cities = JSON.parse(localStorage.getItem("citiesArray"));
-        var button = $('<button>').addClass("btn btn-outline-secondary").text(cities);
-        buttonContainer.append(button);
+        for (i = 0; i < cities.length; i++) {
+            var button = $('<button>').addClass("btn btn-outline-secondary text-left p-2 m-1").text(cities[i]);
+            buttonContainer.append(button);
+        };
+
         //TODO: loop through and append to a button for each city that will run getWeather when clicked
         console.log(cities);
     }
